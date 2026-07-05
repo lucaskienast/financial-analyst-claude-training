@@ -1,0 +1,91 @@
+{
+  "model": "claude-sonnet-4-6",
+  "permissions": {
+    "allow": [
+      "Bash(uv run *)",
+      "Bash(uv add *)",
+      "Bash(uv remove *)",
+      "Bash(uv sync*)",
+      "Bash(uv venv*)",
+      "Bash(uv lock*)",
+      "Bash(uv pip *)",
+      "Bash(git status)",
+      "Bash(git diff*)",
+      "Bash(git log*)",
+      "Bash(git add *)",
+      "Bash(git commit*)",
+      "Bash(git checkout *)",
+      "Bash(git branch*)",
+      "Bash(ls *)",
+      "Bash(find * -type f)",
+      "Bash(grep *)"
+    ],
+    "deny": [
+      "Read(.env)",
+      "Read(.env.*)",
+      "Read(.env.local)",
+      "Read(.env.*.local)",
+      "Read(.env.production*)",
+      "Read(.env.staging*)",
+      "Read(.env.test*)",
+      "Write(.env*)",
+      "Bash(git push * main)",
+      "Bash(git push * master)",
+      "Bash(git push --force*)",
+      "Bash(rm *)",
+      "Bash(rm)",
+      "Bash(sudo *)"
+    ]
+  },
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": ".*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 .claude/hooks/log_tool_pre.py"
+          }
+        ]
+      },
+      {
+        "matcher": ".*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 .claude/hooks/block_dangerous_commands.py"
+          }
+        ]
+      },
+      {
+        "matcher": ".*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 .claude/hooks/block_push_main.py"
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": ".*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 .claude/hooks/log_tool_post.py"
+          }
+        ]
+      },
+      {
+        "matcher": ".*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 .claude/hooks/lint_check.py"
+          }
+        ]
+      }
+    ]
+  }
+}
